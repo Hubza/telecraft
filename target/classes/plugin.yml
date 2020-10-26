@@ -1,0 +1,15 @@
+name: Telecraft
+main: uk.co.hubza.telecraft.telecraft
+version: 1.0
+
+commands:
+   test:
+      description: Test command.
+      usage: /test [player]
+      permission: Telecraft.test
+      permission-message: You don't have Telecraft.test
+
+permissions:
+    Telecraft.test:
+        description: test
+        default: op
