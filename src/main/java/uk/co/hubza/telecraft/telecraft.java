@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,7 +34,8 @@ public final class telecraft extends JavaPlugin {
 	public int currenthour;
 	public BossBar bar;
 	
-	public List<String> teleplayers;
+	public ArrayList<String> teleplayers;
+
 	
 	public void log(String logtext) {
 		Bukkit.broadcastMessage("[Telecraft] : " + logtext);
@@ -50,25 +52,30 @@ public final class telecraft extends JavaPlugin {
 	
 	@Override
     public void onEnable() {
+		teleplayers = new ArrayList<String>();
+		
 		getLogger().info("onEnable has been invoked! The Telecraft plugin is now active!");
+		
 		
 		try {
 			File myObj = new File("teleplayers.txt");
+			log("in the try loop");
 			if (myObj.createNewFile()) {
 			 	System.out.println("File created: " + myObj.getName());
-			 	log("teleplayers.txt file did not exist. Created for future use.");
+			 	getLogger().info("teleplayers.txt file did not exist. Created for future use.");
 			 } else {
-				 log("teleplayers.txt already exists. That means that there was most likely a previous shutdown. Reading...");
+				 getLogger().info("teleplayers.txt already exists. That means that there was most likely a previous shutdown. Reading...");
 				 Scanner myReader = new Scanner(myObj);
 			     while (myReader.hasNextLine()) {
 			        teleplayers.add(myReader.nextLine());
 			     }
-			     log("Teleplayers: " + teleplayers);
+			     getLogger().info("Teleplayers: " + teleplayers);
 			     myReader.close();
 			 }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			getLogger().info("ERROR could not write to teleplayers");
 		}
         
 		bar = Bukkit.createBossBar(
@@ -158,9 +165,13 @@ public final class telecraft extends JavaPlugin {
                     }else{
                     	log("A new hour has began! Time to teleport.");
                     	teleplayers.clear();
+                    	teleplayers = new ArrayList<String>();
                     	try {
                     		PrintWriter writer = new PrintWriter("teleplayers.txt");
                     		writer.close();
+                    		PrintWriter writer2 = new PrintWriter("lasthour.txt");
+                    		writer2.write(currenthour);
+                    		writer2.close();
                     	} catch (IOException e) {
                 			// TODO Auto-generated catch block
                 			e.printStackTrace();
@@ -173,7 +184,6 @@ public final class telecraft extends JavaPlugin {
         }.runTaskTimer(this, 0, 20);
     }
     
-	@SuppressWarnings("deprecation")
 	public void inittele() {
 		for (Player player: Bukkit.getServer().getOnlinePlayers()) {
 			teleplayer(player);
