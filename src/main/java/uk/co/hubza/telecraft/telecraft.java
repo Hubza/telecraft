@@ -34,9 +34,7 @@ public final class telecraft extends JavaPlugin implements Listener {
 	public int lasthour = -1;
 	public int currenthour;
 	public BossBar bar;
-	
 	public ArrayList<String> teleplayers;
-
 	
 	public void log(String logtext) {
 		Bukkit.broadcastMessage("[Telecraft] : " + logtext);
@@ -56,11 +54,9 @@ public final class telecraft extends JavaPlugin implements Listener {
     public void onEnable() {
 		teleplayers = new ArrayList<String>();
 		
-		
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		
 		getLogger().info("onEnable has been invoked! The Telecraft plugin is now active!");
-		
 		
 		try {
 			File myObj = new File("teleplayers.txt");
@@ -92,8 +88,6 @@ public final class telecraft extends JavaPlugin implements Listener {
 		
 		new BukkitRunnable() {
             public void run() {
-            	
-            	
             	for (Player p: Bukkit.getServer().getOnlinePlayers()) {
             		bar.addPlayer(p);
             	}
