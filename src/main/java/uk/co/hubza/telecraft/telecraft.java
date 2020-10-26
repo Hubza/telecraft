@@ -37,7 +37,8 @@ public final class telecraft extends JavaPlugin implements Listener {
 	public ArrayList<String> teleplayers;
 	
 	public void log(String logtext) {
-		Bukkit.broadcastMessage("[Telecraft] : " + logtext);
+		//Bukkit.broadcastMessage("[Telecraft] : " + logtext);
+		getLogger().info(logtext);
 	}
 	
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
@@ -168,10 +169,17 @@ public final class telecraft extends JavaPlugin implements Listener {
                     	try {
                     		PrintWriter writer = new PrintWriter("teleplayers.txt");
                     		writer.close();
-                    		PrintWriter writer2 = new PrintWriter("lasthour.txt");
-                    		writer2.write(currenthour);
-                    		writer2.close();
                     	} catch (IOException e) {
+                			// TODO Auto-generated catch block
+                			e.printStackTrace();
+                		}
+                    	FileWriter fw;
+                    	try {
+                			fw = new FileWriter("lasthour.txt");
+                			BufferedWriter bw = new BufferedWriter(fw);
+                			bw.write(Integer.toString(currenthour));
+                			bw.close();
+                		} catch (IOException e) {
                 			// TODO Auto-generated catch block
                 			e.printStackTrace();
                 		}
@@ -195,7 +203,7 @@ public final class telecraft extends JavaPlugin implements Listener {
 		try {
 			fw = new FileWriter("teleplayers.txt", true);
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write("\n" + player.getDisplayName());
+			bw.write(player.getDisplayName());
 			bw.newLine();
 			bw.close();
 		} catch (IOException e) {
@@ -261,4 +269,3 @@ public final class telecraft extends JavaPlugin implements Listener {
     
     
 }
-
