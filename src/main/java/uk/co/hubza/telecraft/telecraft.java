@@ -25,11 +25,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class telecraft extends JavaPlugin {
+public final class telecraft extends JavaPlugin implements Listener {
 	public int lasthour = -1;
 	public int currenthour;
 	public BossBar bar;
@@ -43,6 +44,7 @@ public final class telecraft extends JavaPlugin {
 	
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
     public void onJoin(PlayerJoinEvent e) {
+		log("user joined");
 		Player player = e.getPlayer();
 		if (!teleplayers.contains(player.getDisplayName())) {
 		    log(player.getDisplayName() + " has joined the server. A teleport has happened whilst the player was offline. The player will now be teleported.");
@@ -53,6 +55,9 @@ public final class telecraft extends JavaPlugin {
 	@Override
     public void onEnable() {
 		teleplayers = new ArrayList<String>();
+		
+		
+		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		
 		getLogger().info("onEnable has been invoked! The Telecraft plugin is now active!");
 		
@@ -210,10 +215,9 @@ public final class telecraft extends JavaPlugin {
 		int minX= x - 2500;
 		int maxZ= z + 2500;
 		int minZ= z - 2500;
-		Random Xrand = new Random();
-		x = Xrand.nextInt(maxX - minX) + minX;
-		Random Zrand = new Random();
-		z = Zrand.nextInt(maxZ - minZ) + minZ;
+		Random rand = new Random();
+		x = rand.nextInt(maxX - minX) + minX;
+		z = rand.nextInt(maxZ - minZ) + minZ;
 		int y = Bukkit.getServer().getWorld("world").getHighestBlockAt(x,z).getY();
 		Location loc = new Location(player.getLocation().getWorld(), x, y, z);
 		loc.getChunk().load();
