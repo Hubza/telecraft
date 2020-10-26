@@ -1,14 +1,14 @@
 package uk.co.hubza.telecraft;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
+import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -22,6 +22,9 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -30,9 +33,20 @@ public final class telecraft extends JavaPlugin {
 	public int currenthour;
 	public BossBar bar;
 	
+	public List<String> teleplayers;
+	
 	public void log(String logtext) {
 		Bukkit.broadcastMessage("[Telecraft] : " + logtext);
 	}
+	
+	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+    public void onJoin(PlayerJoinEvent e) {
+		Player player = e.getPlayer();
+		if (!teleplayers.contains(player.getDisplayName())) {
+		    log(player.getDisplayName() + " has joined the server. A teleport has happened whilst the player was offline. The player will now be teleported.");
+		    teleplayer(player);
+		}
+    }
 	
 	@Override
     public void onEnable() {
@@ -47,16 +61,16 @@ public final class telecraft extends JavaPlugin {
 				 log("teleplayers.txt already exists. That means that there was most likely a previous shutdown. Reading...");
 				 Scanner myReader = new Scanner(myObj);
 			     while (myReader.hasNextLine()) {
-			        lasthour = Integer.parseInt(myReader.nextLine());
-			        log("Read the doc. " + lasthour);
+			        teleplayers.add(myReader.nextLine());
 			     }
+			     log("Teleplayers: " + teleplayers);
 			     myReader.close();
 			 }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        // TODO Insert logic to be performed when the plugin is enabled
+        
 		bar = Bukkit.createBossBar(
                 ChatColor.DARK_PURPLE + "Initializing...",
                 BarColor.PURPLE,
@@ -66,6 +80,8 @@ public final class telecraft extends JavaPlugin {
 		
 		new BukkitRunnable() {
             public void run() {
+            	
+            	
             	for (Player p: Bukkit.getServer().getOnlinePlayers()) {
             		bar.addPlayer(p);
             	}
@@ -141,6 +157,14 @@ public final class telecraft extends JavaPlugin {
                     	log("lasthour is the same as now. don't run anything");
                     }else{
                     	log("A new hour has began! Time to teleport.");
+                    	teleplayers.clear();
+                    	try {
+                    		PrintWriter writer = new PrintWriter("teleplayers.txt");
+                    		writer.close();
+                    	} catch (IOException e) {
+                			// TODO Auto-generated catch block
+                			e.printStackTrace();
+                		}
                         lasthour = currenthour;
                         inittele();
                     }
@@ -157,6 +181,18 @@ public final class telecraft extends JavaPlugin {
 	}
 	
 	public void teleplayer(Player player) {
+		teleplayers.add(player.getDisplayName());
+		FileWriter fw;
+		try {
+			fw = new FileWriter("teleplayers.txt", true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write("\n" + player.getDisplayName());
+			bw.newLine();
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Location spawn = Bukkit.getServer().getWorld("world").getSpawnLocation();
 		int x = 0;
 		int z = 0;
