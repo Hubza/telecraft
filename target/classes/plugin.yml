@@ -8,8 +8,16 @@ commands:
       usage: /test [player]
       permission: Telecraft.test
       permission-message: You don't have Telecraft.test
+   tpplayer:
+      description: Teleport specified player.
+      usage: /tpplayer [player]
+      permission: Telecraft.tpplayer
+      permission-message: You don't have Telecraft.tpplayer
 
 permissions:
     Telecraft.test:
+        description: test
+        default: op
+    Telecraft.tpplayer:
         description: test
         default: op
