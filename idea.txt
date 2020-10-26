@@ -1,0 +1,31 @@
+- count up every day (probably want to use some other way than waiting, due to server restarts )
+- when day hits, count online players into an array
+- delete text document (read on, you will understand)
+- run a foreach on all the players, adding them to a text document (in future this can be a database, though i think a doc is the best idea) and teleporting them
+- when a player joins, see if they're on the text document yet. if not, teleport them randomly and then add them, also, to the database/text doc.
+
+
+https://bukkit.org/threads/running-a-method-every-second.319870/
+superior https://www.spigotmc.org/threads/how-do-i-do-something-every-x-amount-of-seconds.101254/
+
+
+
+public int lasthour = -1;
+public int currenthour;
+
+new BukkitRunnable() {
+    public void run() {
+        int currenthour = 0; // set this to the current hour, i dunno
+        if(lasthour == -1){
+            // load file where last hour was saved
+        }
+        else{
+            if(currenthour == lasthour){
+                // it's the same, dont do anything
+            }else{
+                // new hour! pog. lets go
+                lasthour = currenthour;
+            }
+        }
+    }
+}.runTaskTimer(plugin, 0, 20);
