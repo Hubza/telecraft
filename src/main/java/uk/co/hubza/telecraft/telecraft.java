@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -35,10 +36,13 @@ public final class telecraft extends JavaPlugin implements Listener {
 	public int currenthour;
 	public BossBar bar;
 	public ArrayList<String> teleplayers;
+	public String verbose = "false";
 	
 	public void log(String logtext) {
 		//Bukkit.broadcastMessage("[Telecraft] : " + logtext);
-		getLogger().info(logtext);
+		if(verbose == "true") {
+			getLogger().info(logtext);
+		}
 	}
 	
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
@@ -51,8 +55,41 @@ public final class telecraft extends JavaPlugin implements Listener {
 		}
     }
 	
+    public void CheckConfig() {
+        
+        if(getConfig().get("verbose") == null){ //if the setting has been deleted it will be null
+            getConfig().set("verbose", "false"); //reset the setting
+            saveConfig();
+            reloadConfig();
+ 
+        }
+ 
+    }
+	
 	@Override
     public void onEnable() {
+        File file = new File(getDataFolder() + File.separator + "config.yml"); //This will get the config file
+        
+        
+        if (!file.exists()){ //This will check if the file exist
+        	//Situation A, File doesn't exist
+
+        	getConfig().addDefault("verbose", "false"); //adding default settings
+
+        //Save the default settings
+        	getConfig().options().copyDefaults(true);
+        	saveConfig();
+        } else {
+        //situation B, Config does exist
+        	CheckConfig(); //function to check the important settings
+        	saveConfig(); //saves the config
+        	reloadConfig();    //reloads the config
+
+        }   
+        
+        //get String
+        verbose = getConfig().getString("verbose");
+
 		teleplayers = new ArrayList<String>();
 		
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
